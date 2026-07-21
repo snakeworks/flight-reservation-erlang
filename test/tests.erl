@@ -66,6 +66,17 @@ flight_normalizes_pricing_test() ->
     Prices = [P || #tier{price = P} <- F#flight.pricing],
     ?assertEqual([600, 650, 700], Prices).
 
+loader_missing_file_test() ->
+    ?assertMatch({error, enoent}, input_loader:load("no_such.config")).
+
+loads_config_file_test() ->
+    {ok, {Flights, Customers}} = input_loader:load("test/test.config"),
+    ?assertEqual(3, length(Flights)),
+    ?assertEqual(4, length(Customers)),
+    [F0 | _] = Flights,
+    ?assertEqual(0, F0#flight.id),
+    ?assertEqual([600, 650, 700], [P || #tier{price = P} <- F0#flight.pricing]).
+
 setup() -> system:init().
 cleanup(_) -> system:stop().
 
@@ -119,8 +130,8 @@ single_booking_no_partial_test_() ->
             P1 = system:add_flight(base:flight(1, "BRU", "ATL", "Delta",
                                             [base:tier(620, 50, 0)])),
             {ok, Id, _} = system:reserve(base:customer(1, "BRU", "ATL", 5, 650)),
-            ?assertEqual(1, Id),                        % booked the second
-            ?assertEqual(0, occupied(system:flight_get(P0))),  % first untouched
+            ?assertEqual(1, Id),
+            ?assertEqual(0, occupied(system:flight_get(P0))),
             ?assertEqual(5, occupied(system:flight_get(P1)))
         end
     end}.
