@@ -2,6 +2,8 @@
 -include("base.hrl").
 -export([tier/3, flight/5, customer/5]).
 
+% NOTE: Always use these constructors instead of creating records manually!!
+
 tier(Price, Available, Occupied)
   when is_integer(Price), Price >= 0,
     is_integer(Available), Available >= 0,

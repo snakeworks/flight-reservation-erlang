@@ -1,6 +1,6 @@
 -module(booking).
 -include("base.hrl").
--export([matches/2, reserve/2]).
+-export([matches/2, reserve/2, reserve_route/2]).
 
 matches(#flight{from = From, to = To}, #customer{from = From, to = To}) ->
     true;
@@ -18,6 +18,16 @@ reserve(Flight = #flight{pricing = Pricing}, Customer = #customer{seats = Seats,
                 error ->
                     {error, not_enough_seats}
             end
+    end.
+
+reserve_route([], _Customer) ->
+    {error, no_availability};
+reserve_route([Flight | Rest], Customer) ->
+    case reserve(Flight, Customer) of
+        {ok, UpdatedFlight, Cost} ->
+            {ok, UpdatedFlight, Cost};
+        {error, _Reason} ->
+            reserve_route(Rest, Customer)
     end.
 
 consume(Tiers, _Budget, 0, Done, Cost) ->
