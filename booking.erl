@@ -7,8 +7,7 @@ matches(#flight{from = From, to = To}, #customer{from = From, to = To}) ->
 matches(#flight{}, #customer{}) ->
     false.
 
-reserve(Flight = #flight{pricing = Pricing},
-        Customer = #customer{seats = Seats, budget = Budget}) ->
+reserve(Flight = #flight{pricing = Pricing}, Customer = #customer{seats = Seats, budget = Budget}) ->
     case matches(Flight, Customer) of
         false ->
             {error, route_mismatch};
@@ -32,5 +31,4 @@ consume([Tier = #tier{price = P, available = A, occupied = O} | Rest],
         Budget, Remaining, Done, Cost) ->
     ToTake = min(A, Remaining),
     Moved = Tier#tier{available = A - ToTake, occupied = O + ToTake},
-    consume(Rest, Budget, Remaining - ToTake,
-            [Moved | Done], Cost + ToTake * P).
+    consume(Rest, Budget, Remaining - ToTake, [Moved | Done], Cost + ToTake * P).
