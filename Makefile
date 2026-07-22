@@ -2,7 +2,7 @@ EBIN := ebin
 SRC := $(wildcard src/*.erl)
 TEST := $(wildcard test/*.erl)
 
-.PHONY: all compile test bench1 bench2 clean
+.PHONY: all compile test bench1 bench2 bench3 clean
 
 PLIMIT := +P 20000000
 
@@ -20,6 +20,9 @@ bench1: compile
 
 bench2: compile
 	erl $(PLIMIT) -noshell -pa $(EBIN) -eval 'benchmark:exp2(), init:stop(0).'
+
+bench3: compile
+	erl $(PLIMIT) -noshell -pa $(EBIN) -eval 'benchmark:exp3(), init:stop(0).'
 
 clean:
 	rm -rf $(EBIN)/*.beam
