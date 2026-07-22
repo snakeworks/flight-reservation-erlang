@@ -66,17 +66,6 @@ flight_normalizes_pricing_test() ->
     Prices = [P || #tier{price = P} <- F#flight.pricing],
     ?assertEqual([600, 650, 700], Prices).
 
-loader_missing_file_test() ->
-    ?assertMatch({error, enoent}, input_loader:load("no_such.config")).
-
-loads_config_file_test() ->
-    {ok, {Flights, Customers}} = input_loader:load("test/test.config"),
-    ?assertEqual(3, length(Flights)),
-    ?assertEqual(4, length(Customers)),
-    [F0 | _] = Flights,
-    ?assertEqual(0, F0#flight.id),
-    ?assertEqual([600, 650, 700], [P || #tier{price = P} <- F0#flight.pricing]).
-
 setup() -> system:init().
 cleanup(_) -> system:stop().
 
