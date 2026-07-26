@@ -146,18 +146,29 @@ def plot_experiment(experiment, per_dir_summary):
         x_columns.add(" = ".join([x_column, *covarying]))
         xs = [p[0] for p in points]
         ys = [p[1] for p in points]
+        es = [p[2] for p in points]
         all_x.extend(xs)
         all_y.extend(ys)
-        marker = "o" if len(xs) <= 24 else None
-        ax.plot(
-            xs,
-            ys,
-            marker=marker,
-            markersize=4,
-            linewidth=1.5,
-            alpha=0.9,
-            label=label,
-        )
+        if len(xs) <= 24:
+            ax.errorbar(
+                xs,
+                ys,
+                yerr=es,
+                marker="o",
+                markersize=4,
+                linewidth=1.5,
+                alpha=0.9,
+                capsize=3,
+                elinewidth=1,
+                label=label,
+            )
+        else:
+            (line,) = ax.plot(xs, ys, linewidth=1.5, alpha=0.9, label=label)
+            lo = [y - e for y, e in zip(ys, es)]
+            hi = [y + e for y, e in zip(ys, es)]
+            ax.fill_between(
+                xs, lo, hi, color=line.get_color(), alpha=0.2, linewidth=0
+            )
 
     if not all_x:
         plt.close(fig)
